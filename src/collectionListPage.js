@@ -9,29 +9,97 @@ const breakpoints = [576, 768, 992, 1200];
 const mq = facepaint(breakpoints.map((bp) => `@media (min-width: ${bp}px)`));
 
 function CollectionListPage() {
-  const [collections, setCollections] = useState(null);
+  const [collections, setCollections] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [collectionName, setCollectionName] = useState("");
 
   const onInput = ({ target: { value } }) => setCollectionName(value);
 
   useEffect(() => {
-    setCollections(localStorage.getItem("collections"));
+    if (localStorage.getItem("collections") !== null)
+      setCollections(JSON.parse(localStorage.getItem("collections")));
   }, []);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
   const saveCollections = () => {
-    var arrayOfCollections = [];
+    var arrayOfCollections = collections;
     var collection = {
       collectionName: collectionName,
       listAnime: [],
     };
     arrayOfCollections.push(collection);
     localStorage.setItem("collections", JSON.stringify(arrayOfCollections));
+    setCollections(arrayOfCollections);
     setShowModal(false);
   };
+
+  const removeCollections = (number) => {
+    var temp = [...collections];
+    temp.splice(number, 1);
+    setCollections(temp);
+    console.log(collections);
+    //items = items;
+    localStorage.setItem("collections", JSON.stringify(collections));
+
+    console.log(JSON.parse(localStorage.getItem("collections")));
+  };
+
+  let items = [];
+  console.log(collections.length);
+  console.log(collections);
+  for (let number = 0; number < collections.length; number++) {
+    items.push(
+      <Row
+        key={number}
+        css={mq({
+          paddingTop: "5px",
+          paddingBottom: "5px",
+        })}
+      >
+        <Col md={2} xs={3}>
+          <img
+            src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
+            alt="defaultImage"
+            css={mq({
+              width: "100%",
+              maxHeight: "auto",
+              float: "left",
+            })}
+          ></img>
+        </Col>
+        <Col md={6} xs={5}>
+          <h5
+            css={mq({
+              float: "left",
+            })}
+          >
+            {collections[number].collectionName}
+          </h5>
+        </Col>
+        <Col xs={4}>
+          <Button
+            css={mq({
+              float: "right",
+            })}
+            variant="danger"
+            onClick={() => removeCollections(number)}
+          >
+            Remove
+          </Button>
+          <Button
+            css={mq({
+              float: "right",
+            })}
+            variant="success"
+          >
+            Edit
+          </Button>
+        </Col>
+      </Row>
+    );
+  }
 
   return (
     <div
@@ -62,6 +130,7 @@ function CollectionListPage() {
           </Button>
         </Col>
       </Row>
+      {items}
 
       <Modal show={showModal} onHide={handleClose} keyboard={false}>
         <Modal.Header closeButton>
