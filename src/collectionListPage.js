@@ -12,6 +12,8 @@ function CollectionListPage() {
   const [collections, setCollections] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [collectionName, setCollectionName] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editedNumber, setEditedNumber] = useState(0);
 
   const onInput = ({ target: { value } }) => setCollectionName(value);
 
@@ -24,12 +26,18 @@ function CollectionListPage() {
   const handleClose = () => setShowModal(false);
 
   const saveCollections = () => {
-    var arrayOfCollections = collections;
-    var collection = {
-      collectionName: collectionName,
-      listAnime: [],
-    };
-    arrayOfCollections.push(collection);
+    var arrayOfCollections = [...collections];
+    if (isEdit === true) {
+      console.log(arrayOfCollections);
+      console.log(editedNumber);
+      arrayOfCollections[editedNumber].collectionName = collectionName;
+    } else {
+      var collection = {
+        collectionName: collectionName,
+        listAnime: [],
+      };
+      arrayOfCollections.push(collection);
+    }
     localStorage.setItem("collections", JSON.stringify(arrayOfCollections));
     setCollections(arrayOfCollections);
     setShowModal(false);
@@ -46,8 +54,17 @@ function CollectionListPage() {
     console.log(JSON.parse(localStorage.getItem("collections")));
   };
 
+  const openEditDialog = (number) => {
+    var temp = [...collections];
+    setEditedNumber(number);
+    console.log(editedNumber);
+    setCollectionName(temp[number].collectionName);
+    setShowModal(true);
+    setIsEdit(true);
+  };
+
   let items = [];
-  console.log(collections.length);
+  //console.log(collections.length);
   console.log(collections);
   for (let number = 0; number < collections.length; number++) {
     items.push(
@@ -93,6 +110,7 @@ function CollectionListPage() {
               float: "right",
             })}
             variant="success"
+            onClick={() => openEditDialog(number)}
           >
             Edit
           </Button>
