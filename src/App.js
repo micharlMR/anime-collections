@@ -1,29 +1,13 @@
 import "./App.css";
 /** @jsxImportSource @emotion/react */
 
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
-import AnimeListPage from "./animeListPage";
-import AnimeDetailPage from "./animeDetailPage";
-import CollectionListPage from "./collectionListPage";
-import CollectionDetailPage from "./collectionDetailPage";
-
-function HomeNavbar() {
-  return (
-    <Navbar bg="light" expand="lg">
-      <Container>
-        <Navbar.Brand href="/">Anime list</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/">Anime List</Nav.Link>
-            <Nav.Link href="/collections">Collections</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-  );
-}
+import AnimeListPage from "./pages/animeListPage";
+import AnimeDetailPage from "./pages/animeDetailPage";
+import CollectionListPage from "./pages/collectionListPage";
+import CollectionDetailPage from "./pages/collectionDetailPage";
+import HomeNavbar from "./components/homeNavbar";
 
 function App() {
   return (
