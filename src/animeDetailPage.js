@@ -1,6 +1,7 @@
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { useQuery, gql } from "@apollo/client";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import facepaint from "facepaint";
 
 /** @jsxImportSource @emotion/react */
@@ -29,6 +30,25 @@ const REQDETAILANIME = gql`
 `;
 
 function AnimeDetails(props) {
+  const [collectionName, setCollectionName] = useState("");
+  const [collections, setCollections] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
+  const onInput = ({ target: { value } }) => setCollectionName(value);
+
+  const openAddDialog = () => {
+    setCollectionName("");
+    handleShow();
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("collections") !== null)
+      setCollections(JSON.parse(localStorage.getItem("collections")));
+  }, []);
+
   const { loading, error, data } = useQuery(REQDETAILANIME, {
     variables: {
       id: props.idAnime,
@@ -50,9 +70,99 @@ function AnimeDetails(props) {
 
   console.log(data.Media.genres);
 
-  //data.Media.genres.map((note) => (genres = genres.concat({ note } + " ")));
+  const CollectionItems = () => {
+    console.log(collections);
+    if (collections.length <= 0) {
+      return (
+        <Row>
+          <Col>
+            <p
+              css={mq({
+                float: "left",
+              })}
+            >
+              There is no collections yet.
+            </p>
+          </Col>
+          <Col>
+            <Button
+              onClick={openAddDialog}
+              css={mq({
+                float: "right",
+              })}
+            >
+              add a collection
+            </Button>
+          </Col>
+        </Row>
+      );
+    }
+    return collections.map((collection, key) => {
+      let isInCollections = false;
+      isInCollections = collection.listAnime.some((idAnime) => {
+        return idAnime === props.idAnime;
+      });
+      //console.log("felicia " + isInCollections);
+      //console.log("hai aku key: " + key);
+      return (
+        <Row key={key}>
+          <Col>
+            <Link to="/collections_details" state={{ id: key }}>
+              <h4
+                css={mq({
+                  float: "left",
+                })}
+              >
+                {collection.collectionName}
+              </h4>
+            </Link>
+          </Col>
+          <Col>
+            {!isInCollections ? (
+              <Button
+                variant="primary"
+                css={mq({
+                  float: "right",
+                })}
+                onClick={() => addToCollection(key)}
+              >
+                Add to Collection
+              </Button>
+            ) : (
+              <p
+                css={mq({
+                  float: "right",
+                })}
+              >
+                Already on Collection
+              </p>
+            )}
+          </Col>
+        </Row>
+      );
+    });
+  };
 
-  //console.log(genres);
+  function addToCollection(id) {
+    var temp = [...collections];
+    temp[id].listAnime.push(props.idAnime);
+    localStorage.setItem("collections", JSON.stringify(temp));
+    setCollections(temp);
+  }
+
+  const saveCollections = () => {
+    var arrayOfCollections = [...collections];
+
+    var collection = {
+      collectionName: collectionName,
+      listAnime: [],
+    };
+    arrayOfCollections.push(collection);
+
+    localStorage.setItem("collections", JSON.stringify(arrayOfCollections));
+    setCollections(arrayOfCollections);
+    setShowModal(false);
+  };
 
   return (
     <div
@@ -75,34 +185,50 @@ function AnimeDetails(props) {
           <p>Total Episodes: {data.Media.episodes} episodes</p>
           <p>Average Scores: {data.Media.averageScore} out of 100</p>
           <p>Genres: {genres}</p>
-          <Button
+          {/* <Button
             variant="primary"
             onClick={() => addToCollection(data.Media.id)}
           >
             add this to local storage
-          </Button>
+          </Button> */}
+          <Row>
+            <Col>
+              <h3
+                css={mq({
+                  float: "left",
+                })}
+              >
+                Collection List
+              </h3>
+            </Col>
+            <Col></Col>
+          </Row>
+          <CollectionItems />
         </Col>
       </Row>
+      <Modal show={showModal} onHide={handleClose} keyboard={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create Collections</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Collection Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Insert your collection name"
+                value={collectionName}
+                onChange={onInput}
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={saveCollections}>
+              Save
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
-}
-
-function addToCollection(id) {
-  // var something = [16];
-  // localStorage.setItem("collections", JSON.stringify(something));
-  var arrayCollections = [];
-  var temp = localStorage.getItem("collections");
-  console.log(temp);
-  if (temp !== null) arrayCollections = JSON.parse(temp);
-  console.log(arrayCollections);
-  arrayCollections.push(id);
-  console.log(arrayCollections);
-  localStorage.setItem("collections", JSON.stringify(arrayCollections));
-
-  // if (localStorage.getItem("collections") == id) {
-  //   console.log("ID sudah ada di local storage");
-  // }
-  //localStorage.setItem("collections", id);
 }
 
 function AnimeDetailPage() {
