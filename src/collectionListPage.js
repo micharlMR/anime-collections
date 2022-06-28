@@ -90,6 +90,23 @@ function CollectionListPage() {
 
   const Items = () => {
     console.log(collections);
+
+    if (collections.length <= 0) {
+      return (
+        <Row>
+          <Col>
+            <p
+              css={mq({
+                float: "left",
+              })}
+            >
+              There is no collections yet.
+            </p>
+          </Col>
+          <Col></Col>
+        </Row>
+      );
+    }
     return collections.map((collection, key) => {
       return (
         <Row
