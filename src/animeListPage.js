@@ -101,7 +101,7 @@ function AnimeListPage() {
       >
         <Row>
           <Col md={6}>
-            <Link to="/details" state={{ id: id }}>
+            <Link to="/anime_details" state={{ id: id }}>
               <img
                 css={mq({
                   width: "100%",

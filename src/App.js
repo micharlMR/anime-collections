@@ -6,6 +6,7 @@ import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 import AnimeListPage from "./animeListPage";
 import AnimeDetailPage from "./animeDetailPage";
 import CollectionListPage from "./collectionListPage";
+import CollectionDetailPage from "./collectionDetailPage";
 
 function HomeNavbar() {
   return (
@@ -32,8 +33,12 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<AnimeListPage />} />
-            <Route path="/details" element={<AnimeDetailPage />} />
+            <Route path="/anime_details" element={<AnimeDetailPage />} />
             <Route path="/collections" element={<CollectionListPage />} />
+            <Route
+              path="/collections_details"
+              element={<CollectionDetailPage />}
+            />
           </Routes>
         </Router>
       </Container>

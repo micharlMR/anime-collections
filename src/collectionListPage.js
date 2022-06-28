@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Row, Col, Modal, Form } from "react-bootstrap";
 import facepaint from "facepaint";
+import { Link } from "react-router-dom";
 
 /** @jsxImportSource @emotion/react */
 
@@ -76,15 +77,17 @@ function CollectionListPage() {
         })}
       >
         <Col md={2} xs={3}>
-          <img
-            src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
-            alt="defaultImage"
-            css={mq({
-              width: "100%",
-              maxHeight: "auto",
-              float: "left",
-            })}
-          ></img>
+          <Link to="/collections_details">
+            <img
+              src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
+              alt="defaultImage"
+              css={mq({
+                width: "100%",
+                maxHeight: "auto",
+                float: "left",
+              })}
+            ></img>
+          </Link>
         </Col>
         <Col md={6} xs={5}>
           <h5
