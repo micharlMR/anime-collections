@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Row, Col, Modal, Form } from "react-bootstrap";
-import facepaint from "facepaint";
 import { Link } from "react-router-dom";
+import facepaint from "facepaint";
 
 /** @jsxImportSource @emotion/react */
 
@@ -12,9 +12,11 @@ const mq = facepaint(breakpoints.map((bp) => `@media (min-width: ${bp}px)`));
 function CollectionListPage() {
   const [collections, setCollections] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
   const [collectionName, setCollectionName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [editedNumber, setEditedNumber] = useState(0);
+  const [removedNumber, setRemovedNumber] = useState(0);
 
   const onInput = ({ target: { value } }) => setCollectionName(value);
 
@@ -26,12 +28,16 @@ function CollectionListPage() {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+  const handleShow2 = () => setShowModal2(true);
+  const handleClose2 = () => setShowModal2(false);
+
   const saveCollections = () => {
     var arrayOfCollections = [...collections];
     if (isEdit === true) {
       console.log(arrayOfCollections);
       console.log(editedNumber);
       arrayOfCollections[editedNumber].collectionName = collectionName;
+      setIsEdit(false);
     } else {
       var collection = {
         collectionName: collectionName,
@@ -44,15 +50,16 @@ function CollectionListPage() {
     setShowModal(false);
   };
 
-  const removeCollections = (number) => {
+  const removeCollections = () => {
     var temp = [...collections];
-    temp.splice(number, 1);
+    temp.splice(removedNumber, 1);
     setCollections(temp);
     console.log(collections);
     //items = items;
-    localStorage.setItem("collections", JSON.stringify(collections));
+    localStorage.setItem("collections", JSON.stringify(temp));
 
-    console.log(JSON.parse(localStorage.getItem("collections")));
+    //console.log(JSON.parse(localStorage.getItem("collections")));
+    handleClose2();
   };
 
   const openEditDialog = (number) => {
@@ -62,6 +69,19 @@ function CollectionListPage() {
     setCollectionName(temp[number].collectionName);
     setShowModal(true);
     setIsEdit(true);
+  };
+
+  const openAddDialog = () => {
+    setCollectionName("");
+    handleShow();
+  };
+
+  const openRemoveDialog = (number) => {
+    var temp = [...collections];
+    setRemovedNumber(number);
+    console.log(removedNumber);
+    setCollectionName(temp[number].collectionName);
+    handleShow2();
   };
 
   let items = [];
@@ -77,7 +97,7 @@ function CollectionListPage() {
         })}
       >
         <Col md={2} xs={3}>
-          <Link to="/collections_details">
+          <Link to="/collections_details" state={{ id: number }}>
             <img
               src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
               alt="defaultImage"
@@ -104,7 +124,7 @@ function CollectionListPage() {
               float: "right",
             })}
             variant="danger"
-            onClick={() => removeCollections(number)}
+            onClick={() => openRemoveDialog(number)}
           >
             Remove
           </Button>
@@ -142,7 +162,7 @@ function CollectionListPage() {
         <Col>
           <Button
             variant="primary"
-            onClick={handleShow}
+            onClick={openAddDialog}
             css={mq({
               float: "right",
             })}
@@ -170,6 +190,22 @@ function CollectionListPage() {
             </Form.Group>
             <Button variant="primary" onClick={saveCollections}>
               Save
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showModal2} onHide={handleClose2} keyboard={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Remove Collections</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Remove {collectionName} Collection </Form.Label>
+            </Form.Group>
+            <Button variant="danger" onClick={removeCollections}>
+              Remove
             </Button>
           </Form>
         </Modal.Body>
