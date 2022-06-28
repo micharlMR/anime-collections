@@ -18,7 +18,11 @@ function CollectionListPage() {
   const [editedNumber, setEditedNumber] = useState(0);
   const [removedNumber, setRemovedNumber] = useState(0);
 
-  const onInput = ({ target: { value } }) => setCollectionName(value);
+  const onInput = ({ target: { value } }) => {
+    if (/^[^!-\/:-@\[-`{-~]+$/.test(value) || value === "") {
+      setCollectionName(value);
+    }
+  };
 
   useEffect(() => {
     if (localStorage.getItem("collections") !== null)
@@ -84,63 +88,63 @@ function CollectionListPage() {
     handleShow2();
   };
 
-  let items = [];
-  //console.log(collections.length);
-  console.log(collections);
-  for (let number = 0; number < collections.length; number++) {
-    items.push(
-      <Row
-        key={number}
-        css={mq({
-          paddingTop: "5px",
-          paddingBottom: "5px",
-        })}
-      >
-        <Col md={2} xs={3}>
-          <Link to="/collections_details" state={{ id: number }}>
-            <img
-              src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
-              alt="defaultImage"
+  const Items = () => {
+    console.log(collections);
+    return collections.map((collection, key) => {
+      return (
+        <Row
+          key={key}
+          css={mq({
+            paddingTop: "5px",
+            paddingBottom: "5px",
+          })}
+        >
+          <Col md={2} xs={3}>
+            <Link to="/collections_details" state={{ id: key }}>
+              <img
+                src="https://i.pinimg.com/564x/a3/ac/1e/a3ac1ed5abaedffd9947face7901e14c.jpg"
+                alt="defaultImage"
+                css={mq({
+                  width: "100%",
+                  maxHeight: "auto",
+                  float: "left",
+                })}
+              ></img>
+            </Link>
+          </Col>
+          <Col md={6} xs={5}>
+            <h5
               css={mq({
-                width: "100%",
-                maxHeight: "auto",
                 float: "left",
               })}
-            ></img>
-          </Link>
-        </Col>
-        <Col md={6} xs={5}>
-          <h5
-            css={mq({
-              float: "left",
-            })}
-          >
-            {collections[number].collectionName}
-          </h5>
-        </Col>
-        <Col xs={4}>
-          <Button
-            css={mq({
-              float: "right",
-            })}
-            variant="danger"
-            onClick={() => openRemoveDialog(number)}
-          >
-            Remove
-          </Button>
-          <Button
-            css={mq({
-              float: "right",
-            })}
-            variant="success"
-            onClick={() => openEditDialog(number)}
-          >
-            Edit
-          </Button>
-        </Col>
-      </Row>
-    );
-  }
+            >
+              {collection.collectionName}
+            </h5>
+          </Col>
+          <Col xs={4}>
+            <Button
+              css={mq({
+                float: "right",
+              })}
+              variant="danger"
+              onClick={() => openRemoveDialog(key)}
+            >
+              Remove
+            </Button>
+            <Button
+              css={mq({
+                float: "right",
+              })}
+              variant="success"
+              onClick={() => openEditDialog(key)}
+            >
+              Edit
+            </Button>
+          </Col>
+        </Row>
+      );
+    });
+  };
 
   return (
     <div
@@ -171,7 +175,7 @@ function CollectionListPage() {
           </Button>
         </Col>
       </Row>
-      {items}
+      <Items />
 
       <Modal show={showModal} onHide={handleClose} keyboard={false}>
         <Modal.Header closeButton>
