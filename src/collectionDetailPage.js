@@ -46,7 +46,15 @@ function CollectionDetailPage() {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-  const onInput = ({ target: { value } }) => setCollectionName(value);
+  const onInput = ({ target: { value } }) => {
+    if (/^[^!-\/:-@\[-`{-~]+$/.test(value) || value === "") {
+      setCollectionName(value);
+    }
+  };
+
+  // const onInput = (value) => {
+  //   setCollectionName(value.replace(/[^\w\s]/gi, ""));
+  // };
 
   useEffect(() => {
     let temp = [];
