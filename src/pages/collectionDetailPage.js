@@ -10,6 +10,7 @@ const breakpoints = [576, 768, 992, 1200];
 
 const mq = facepaint(breakpoints.map((bp) => `@media (min-width: ${bp}px)`));
 
+// query to get anime in chosen collection
 const REQLISTANIME = gql`
   query ($id: Int, $page: Int, $perPage: Int, $id_in: [Int]) {
     Page(page: $page, perPage: $perPage) {
@@ -46,16 +47,14 @@ function CollectionDetailPage() {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+  // prevent some special character input
   const onInput = ({ target: { value } }) => {
     if (/^[^!-\/:-@\[-`{-~]+$/.test(value) || value === "") {
       setCollectionName(value);
     }
   };
 
-  // const onInput = (value) => {
-  //   setCollectionName(value.replace(/[^\w\s]/gi, ""));
-  // };
-
+  // get collection based on the chosen collection
   useEffect(() => {
     let temp = [];
     if (localStorage.getItem("collections") !== null) {
@@ -63,28 +62,25 @@ function CollectionDetailPage() {
       setListAnime(temp[id].listAnime);
       setCollection(temp[id]);
     }
-    console.log(collection);
-    console.log(listAnime);
   }, []);
 
+  // open edit collection name dialog
   const openEditDialog = () => {
-    console.log(showModal);
     var temp = JSON.parse(localStorage.getItem("collections"));
     setCollectionName(temp[id].collectionName);
     handleShow();
   };
 
+  //edit collection name and save it to collection
   const saveCollections = () => {
     var arrayOfCollections = JSON.parse(localStorage.getItem("collections"));
-    console.log(arrayOfCollections);
     arrayOfCollections[id].collectionName = collectionName;
     localStorage.setItem("collections", JSON.stringify(arrayOfCollections));
     setCollection(arrayOfCollections[id]);
     setShowModal(false);
   };
 
-  console.log("ini list Anime: " + listAnime);
-
+  //request anime in collection
   const CollectionAnimeList = () => {
     const { loading, error, data } = useQuery(REQLISTANIME, {
       variables: {
@@ -95,8 +91,8 @@ function CollectionDetailPage() {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
-    console.log(data);
 
+    // loop per anime in chosen collection
     return data.Page.media.map(({ id, title, coverImage }) => (
       <Row
         key={id}

@@ -10,6 +10,7 @@ const breakpoints = [576, 768, 992, 1200];
 
 const mq = facepaint(breakpoints.map((bp) => `@media (min-width: ${bp}px)`));
 
+//Query to request detail anime
 const REQDETAILANIME = gql`
   query ($id: Int) {
     Media(id: $id, type: ANIME) {
@@ -43,16 +44,19 @@ function AnimeDetails(props) {
     }
   };
 
+  // open add collection dialog
   const openAddDialog = () => {
     setCollectionName("");
     handleShow();
   };
 
   useEffect(() => {
+    //get collections list from local storage
     if (localStorage.getItem("collections") !== null)
       setCollections(JSON.parse(localStorage.getItem("collections")));
   }, []);
 
+  // Request detail anime
   const { loading, error, data } = useQuery(REQDETAILANIME, {
     variables: {
       id: props.idAnime,
@@ -62,20 +66,15 @@ function AnimeDetails(props) {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  console.log(data);
-
   let genres = "";
-
+  /// get list of genres
   for (let number = 0; number < data.Media.genres.length; number++) {
     if (number !== data.Media.genres.length - 1)
       genres = genres.concat(data.Media.genres[number] + ", ");
     else genres = genres.concat(data.Media.genres[number]);
   }
 
-  console.log(data.Media.genres);
-
   const CollectionItems = () => {
-    console.log(collections);
     if (collections.length <= 0) {
       return (
         <Row>
@@ -106,8 +105,6 @@ function AnimeDetails(props) {
       isInCollections = collection.listAnime.some((idAnime) => {
         return idAnime === props.idAnime;
       });
-      //console.log("felicia " + isInCollections);
-      //console.log("hai aku key: " + key);
       return (
         <Row key={key}>
           <Col>
@@ -238,7 +235,6 @@ function AnimeDetails(props) {
 function AnimeDetailPage() {
   const location = useLocation();
   const { id } = location.state;
-  console.log(id);
 
   return <AnimeDetails idAnime={id} />;
 }

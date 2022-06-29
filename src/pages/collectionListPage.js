@@ -29,17 +29,18 @@ function CollectionListPage() {
       setCollections(JSON.parse(localStorage.getItem("collections")));
   }, []);
 
+  //open modal for edit and add collection
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+  // open modal for remove collection
   const handleShow2 = () => setShowModal2(true);
   const handleClose2 = () => setShowModal2(false);
 
+  // save collection based on its editting or not
   const saveCollections = () => {
     var arrayOfCollections = [...collections];
     if (isEdit === true) {
-      console.log(arrayOfCollections);
-      console.log(editedNumber);
       arrayOfCollections[editedNumber].collectionName = collectionName;
       setIsEdit(false);
     } else {
@@ -54,43 +55,40 @@ function CollectionListPage() {
     setShowModal(false);
   };
 
+  // remove collection from array
   const removeCollections = () => {
     var temp = [...collections];
     temp.splice(removedNumber, 1);
     setCollections(temp);
-    console.log(collections);
-    //items = items;
     localStorage.setItem("collections", JSON.stringify(temp));
-
-    //console.log(JSON.parse(localStorage.getItem("collections")));
     handleClose2();
   };
 
+  // open edit dialog
   const openEditDialog = (number) => {
     var temp = [...collections];
     setEditedNumber(number);
-    console.log(editedNumber);
     setCollectionName(temp[number].collectionName);
     setShowModal(true);
     setIsEdit(true);
   };
 
+  // open add dialog
   const openAddDialog = () => {
     setCollectionName("");
     handleShow();
   };
 
+  // open remove dialog
   const openRemoveDialog = (number) => {
     var temp = [...collections];
     setRemovedNumber(number);
-    console.log(removedNumber);
     setCollectionName(temp[number].collectionName);
     handleShow2();
   };
 
   const Items = () => {
-    console.log(collections);
-
+    // if there is no collection
     if (collections.length <= 0) {
       return (
         <Row>
@@ -107,6 +105,8 @@ function CollectionListPage() {
         </Row>
       );
     }
+
+    // if there is a collection
     return collections.map((collection, key) => {
       return (
         <Row
@@ -194,6 +194,7 @@ function CollectionListPage() {
       </Row>
       <Items />
 
+      {/* Modal for add and edit collection */}
       <Modal show={showModal} onHide={handleClose} keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Create Collections</Modal.Title>
@@ -216,6 +217,7 @@ function CollectionListPage() {
         </Modal.Body>
       </Modal>
 
+      {/* Modal for remove collection */}
       <Modal show={showModal2} onHide={handleClose2} keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>Remove Collections</Modal.Title>

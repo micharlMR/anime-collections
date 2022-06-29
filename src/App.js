@@ -13,6 +13,7 @@ function App() {
   return (
     <div className="App">
       <HomeNavbar />
+      {/* With navbar outside of router the page loaded will be the routes only when the path is changed */}
       <Container>
         <Router>
           <Routes>

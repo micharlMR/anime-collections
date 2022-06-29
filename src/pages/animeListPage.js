@@ -10,6 +10,7 @@ const breakpoints = [576, 768, 992, 1200];
 
 const mq = facepaint(breakpoints.map((bp) => `@media (min-width: ${bp}px)`));
 
+// request list anime per page
 const REQLISTANIMEPAGING = gql`
   query ($id: Int, $page: Int, $perPage: Int, $search: String) {
     Page(page: $page, perPage: $perPage) {
@@ -36,8 +37,11 @@ const REQLISTANIMEPAGING = gql`
 
 function AnimeListPage() {
   const [active, setActive] = useState(1);
+
+  //the true total pages is 500
   const [totalPages, setTotalPages] = useState(10);
 
+  //make pagination
   let items = [];
   for (let number = 1; number <= totalPages; number++) {
     items.push(
@@ -85,8 +89,7 @@ function AnimeListPage() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
-    console.log(data);
-
+    // result list of anime
     return data.Page.media.map(({ id, title, coverImage, averageScore }) => (
       <Col
         xs={6}
